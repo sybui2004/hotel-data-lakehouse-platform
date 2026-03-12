@@ -1,0 +1,15 @@
+data:
+  folder_path: ./data
+  num_files: 3
+
+datalake:
+  endpoint: localhost:9000
+  bucket_name: hotel-data-lake
+  access_key: minio_access_key
+  secret_key: minio_secret_key
+
+  folders:
+    data_cb_merge: raw/data_cb_merge
+    data_merge: raw/data_merge
+    hotel_ratings: raw/hotel_ratings
+    hotel_details: raw/hotel_details

@@ -1,0 +1,134 @@
+- name: Deploy Data Platform Services
+  hosts: server
+  become: yes 
+  vars:
+    project_path: "/home/sy"
+  tasks:
+    - name: Install prerequisites
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+        state: latest
+        update_cache: true
+
+    - name: Install Docker SDK for python
+      pip:
+        name: docker
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+    
+    - name: Create Docker network
+      community.docker.docker_network:
+        name: datalake-net
+
+    - name: Copy GCP service account key
+      copy:
+        src: ../gcp-key.json
+        dest: "{{ project_path }}/gcp-key.json"
+        mode: '0644'
+
+    - name: Pull recommender image
+      community.docker.docker_image:
+        name: bitis2004/hotel-recommender:prod
+        source: pull
+
+    - name: Run recommender container
+      community.docker.docker_container:
+        name: hotel-recommender-app
+        image: bitis2004/hotel-recommender:prod
+        state: started
+        restart_policy: unless-stopped
+        networks:
+          - name: datalake-net
+        ports:
+          - "8000:8000"
+        volumes:
+          - "{{ project_path }}/gcp-key.json:/app/gcp-key.json"
+        env:
+          DB_HOST: bigquery
+          GOOGLE_APPLICATION_CREDENTIALS: /app/gcp-key.json
+
+
+    - name: Install docker compose
+      apt:
+        name: docker-compose-plugin
+        state: present
+    
+    - name: Copy Airflow docker compose
+      copy:
+        src: ../airflow-docker-compose.yaml
+        dest: "{{ project_path }}/airflow-docker-compose.yaml"
+    - name: Copy Dockerfile
+      copy:
+        src: ../Dockerfile
+        dest: "{{ project_path }}/Dockerfile"
+
+    - name: Copy env file
+      copy:
+        src: ../.env
+        dest: "{{ project_path }}/.env"
+
+    - name: Copy DAGs
+      copy:
+        src: ../pipeline-orchestration-with-airflow/run_env/dags/
+        dest: "{{ project_path }}/run_env/dags/"
+
+    - name: Copy utils scripts
+      copy:
+        src: ../utils/
+        dest: "{{ project_path }}/run_env/utils/"
+
+    - name: Check if data folder exists
+      stat:
+        path: "{{ project_path }}/run_env/data"
+      register: data_dir
+      
+    - name: Copy data files
+      copy:
+        src: ../data/
+        dest: "{{ project_path }}/run_env/data/"
+      when: not data_dir.stat.exists
+
+    - name: Copy spark scripts
+      copy:
+        src: ../spark-script/
+        dest: "{{ project_path }}/run_env/spark-script/"
+
+    - name: Start Airflow
+      command: docker compose -f airflow-docker-compose.yaml up -d
+      args:
+        chdir: "{{ project_path }}"
+
+# local: ansible-playbook create_compute_instance.yaml 
+# local: export ANSIBLE_HOST_KEY_CHECKING=False
+# local: ansible-playbook -i inventory deploy.yaml
+# sudo usermod -aG docker sy
+# ssh-keygen -f ~/.ssh/known_hosts -R 136.110.6.78
+
+# sudo chown -R 1000:0 run_env
+
+# before trigger airflow create dataset `hotel_dw` on bigquery

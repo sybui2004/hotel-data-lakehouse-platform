@@ -1,0 +1,46 @@
+- name: Create Compute Engine instances
+  hosts: localhost
+  tasks:
+  - name: Bring up the first instance
+    gcp_compute_instance:
+      name: instance-1
+      machine_type: n2-standard-8 
+      zone: asia-southeast1-a
+      project: dataengineering-489105
+      auth_kind: serviceaccount
+      service_account_file: "{{ playbook_dir }}/secrets/gcp-key.json"
+      disks:
+        - auto_delete: true
+          boot: true
+          initialize_params:
+            source_image: projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20230727
+            disk_size_gb: 30
+      network_interfaces:
+        - network:
+            selfLink: global/networks/default
+          access_configs:
+          - name: External NAT
+            type: ONE_TO_ONE_NAT
+      state: present # change to absent to delete the instance
+      
+  - name: Create inbound firewall rule for port 8000 and 8081
+    gcp_compute_firewall:
+      name: allow-airflow-api
+      network:
+        selfLink: global/networks/default
+      allowed:
+        - ip_protocol: TCP
+          ports:
+            - '8000'
+            - '8081'
+      source_ranges:
+        - 0.0.0.0/0
+      direction: INGRESS
+      description: Allow incoming traffic on port 8000 and 8081
+      project: dataengineering-489105
+      auth_kind: serviceaccount
+      service_account_file: "{{ playbook_dir }}/secrets/gcp-key.json"
+      state: present # change to absent to delete the instance
+  
+
+# Role: Compute Admin
