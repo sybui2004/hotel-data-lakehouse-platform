@@ -1,0 +1,12 @@
+data:
+  folder_path: /opt/airflow/data
+  num_files: 3
+
+datalake:
+  bucket_name: hotel-data-lake
+
+  folders:
+    data_cb_merge: raw/data_cb_merge
+    data_merge: raw/data_merge
+    hotel_ratings: raw/hotel_ratings
+    hotel_details: raw/hotel_details

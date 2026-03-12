@@ -1,0 +1,2 @@
+[server]
+35.240.157.180 ansible_ssh_private_key_file=/home/sy/.ssh/id_ed25519

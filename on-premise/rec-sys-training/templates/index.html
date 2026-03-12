@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AI-powered hotel recommendation system — discover your perfect stay personalized for you.">
+    <title>Hotel Recommendation System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">🏨</div>
+                <div class="sidebar-brand-text">StayFinder<br><small
+                        style="font-size:10px;opacity:.6;font-family:Inter,sans-serif;font-weight:400;">Recommendation
+                        System</small></div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div>
+                <h3>User ID</h3>
+
+                <div class="form-group">
+                    <label class="form-label" for="user_id">Enter your ID</label>
+                    <input id="user_id" type="number" name="user_id" form="search-form" placeholder="e.g. 10042"
+                        autocomplete="off" value="{{user_id if user_id else ''}}">
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ===== MAIN ===== -->
+        <main class="main">
+
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-tag">✦ AI Powered</div>
+                <h1>Find Your Perfect<br>Hotel Stay</h1>
+                <p>Personalized recommendations powered by machine learning — tailored to your preferences and past
+                    experiences.</p>
+            </div>
+
+            <!-- Search form -->
+            <form id="search-form" action="/search" method="post">
+                <div class="search-bar">
+                    <span class="search-bar-icon">📍</span>
+                    <input class="location" name="location" placeholder="Enter city, destination, or area…"
+                        autocomplete="off" value="{{location if location else ''}}">
+                    <button type="submit" class="search">Search</button>
+                </div>
+            </form>
+
+            {% if location %}
+            <div class="location-badge">
+                📍 Showing results for <span>{{ location }}</span>
+            </div>
+            {% else %}
+            <div class="location-badge" style="opacity:.4">
+                📍 Enter a location to get started
+            </div>
+            {% endif %}
+
+            <!-- Results -->
+            {% if results %}
+
+            <div class="section-title">
+                Recommended Hotels — {{ results|length }} found
+            </div>
+
+            {% for hotel in results %}
+            <div class="hotel-card">
+
+                <div class="hotel-img">
+                    <img src="/static/hotel.jpg" alt="Hotel photo — {{ hotel[0] }}" loading="lazy">
+                    <div class="hotel-img-overlay"></div>
+                </div>
+
+                <div class="hotel-info">
+                    <div>
+                        <div class="hotel-name">{{ hotel.hotel_name }}</div>
+
+                        <div class="hotel-meta" style="margin-top:8px; margin-bottom:12px;">
+                            <div class="hotel-rating">⭐ {{ hotel.hotel_avg_rating }}</div>
+                            <div class="hotel-address">📍 {{ hotel.hotel_location }}</div>
+                        </div>
+
+                        <div class="hotel-description">{{ hotel.hotel_description }}
+                        </div>
+                    </div>
+
+                    <div class="hotel-footer">
+                        <a href="{{ hotel.hotel_url }}" target="_blank" rel="noopener" class="btn-website">
+                            Visit Website →
+                        </a>
+                        <span style="font-size:12px; color: var(--text-muted);">Recommended for you</span>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+
+            {% else %}
+
+            <div class="empty-state">
+                <div class="empty-state-icon">🏨</div>
+                <h3>No results yet</h3>
+                <p>Sign in with your User ID and search a destination to receive personalized hotel recommendations.</p>
+            </div>
+
+            {% endif %}
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
