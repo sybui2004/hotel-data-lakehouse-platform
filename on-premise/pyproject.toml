@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotel-data-lakehouse-on-premise"
+version = "0.1.0"
+description = "On-premise components for Hotel Data Lakehouse Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Bui Thai Sy", email = "symerline2004@gmail.com"}
+]
+dependencies = [
+    "fastparquet==2024.5.0",
+    "minio==7.1.16",
+    "PyYAML==6.0.1",
+    "pandas==3.0.1",
+    "pyarrow==23.0.1",
+    "pyspark==4.1.1",
+    "pydeequ==1.5.0",
+    "python-dotenv==1.2.2",
+    "psycopg2-binary==2.9.11"
+]
+license = {text = "MIT"}
+keywords = ["data-lakehouse", "on-premise", "hotel", "data-engineering", "data-quality"]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Database :: Database",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Machine Learning",
+    "Operating System :: OS Independent"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "data*", "imgs*"]
+
+[project.urls]
+Homepage = "https://github.com/sybui2004/hotel-data-lakehouse-platform"
+Repository = "https://github.com/sybui2004/hotel-data-lakehouse-platform"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
