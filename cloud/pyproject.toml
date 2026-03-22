@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotel-data-lakehouse-cloud"
+version = "0.1.0"
+description = "Cloud components for Hotel Data Lakehouse Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+
+authors = [
+    { name = "Bui Thai Sy", email = "symerline2004@gmail.com" }
+]
+
+license = { text = "MIT" }
+
+keywords = [
+    "data-lakehouse",
+    "cloud",
+    "hotel",
+    "data-engineering",
+    "airflow",
+    "etl",
+    "data-pipeline"
+]
+
+dependencies = [
+    "fastparquet==2024.5.0",
+    "minio==7.1.16",
+    "PyYAML==6.0.1",
+    "pandas==3.0.1",
+    "pyarrow==23.0.1",
+    "pyspark==4.1.1",
+    "pydeequ==1.5.0",
+    "python-dotenv==1.2.2",
+    "psycopg2-binary==2.9.11",
+    "google-cloud-storage==3.9.0",
+    "apache-airflow==2.7.1",
+    "apache-airflow-providers-postgres==5.6.1",
+    "apache-airflow-providers-docker==3.7.5",
+    "airflow-provider-great-expectations==0.2.6",
+    "ansible==12.3.0"
+]
+
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Topic :: Database",
+    "Topic :: System :: Distributed Computing",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License"
+]
+
+[project.urls]
+Homepage = "https://github.com/sybui2004/hotel-data-lakehouse-platform"
+Repository = "https://github.com/sybui2004/hotel-data-lakehouse-platform"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "data*", "imgs*", "terraform*", "ansible*"]

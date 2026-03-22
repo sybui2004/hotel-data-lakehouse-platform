@@ -1,2 +1,4 @@
 *.parquet
 *.jar
+hotel-data-lakehouse-platform.egg-info/
+*/build/
