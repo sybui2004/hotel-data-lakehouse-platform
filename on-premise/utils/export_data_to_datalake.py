@@ -3,7 +3,8 @@ from helpers import load_cfg
 from glob import glob
 import os
 
-CFG_FILE = "./utils/config.yaml"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CFG_FILE = os.path.join(BASE_DIR, "config.yaml")
 
 
 def main():
@@ -49,7 +50,8 @@ def main():
 
         table_counters[table_name] += 1
 
-        object_path = os.path.join(folder, new_name)
+        # Object keys always use "/", regardless of the host OS
+        object_path = f"{folder}/{new_name}"
 
         print(f"Uploading {fp} -> {object_path}")
         client.fput_object(

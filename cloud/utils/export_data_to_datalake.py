@@ -12,8 +12,7 @@ def main():
     datalake_cfg = cfg["datalake"]
     data_cfg = cfg["data"]
 
-    # Create a client with the MinIO server playground, its access key
-    # and secret key.
+    # Create a GCS client authenticated with the service account key.
     client = storage.Client.from_service_account_json(KEY_FILE)
 
     bucket = client.bucket(datalake_cfg["bucket_name"])

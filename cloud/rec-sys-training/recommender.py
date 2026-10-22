@@ -1,18 +1,18 @@
 import joblib
 import numpy as np
-import pandas as pd
 import re
 import os
 from sklearn.metrics.pairwise import linear_kernel
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-credentials = service_account.Credentials.from_service_account_file("/app/gcp-key.json")
+KEY_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/gcp-key.json")
+credentials = service_account.Credentials.from_service_account_file(KEY_FILE)
 
 PROJECT_ID = "dataengineering-489105"
 TABLE_ID = "dataengineering-489105.hotel_dw.data_cb_merge"
 
-bq_client = bigquery.Client(project=PROJECT_ID,credentials=credentials)
+bq_client = bigquery.Client(project=PROJECT_ID, credentials=credentials)
 
 def load_stopwords(folder):
 
@@ -54,7 +54,7 @@ def get_user_description(user_id):
 
     try:
         user_id = int(user_id)
-    except:
+    except (TypeError, ValueError):
         return None
     
     if user_id in _user_cache:
@@ -73,8 +73,6 @@ def get_user_description(user_id):
         ]
     )
 
-    print("USER_ID:", user_id, type(user_id))
-    
     try:
         df = bq_client.query(query, job_config=job_config).to_dataframe()
 
@@ -97,7 +95,9 @@ def get_recommendation(user_id, location, k=10):
 
     user_description = get_user_description(user_id)
 
-    if not user_description:
+    # Missing users and NULL/NaN descriptions would otherwise score every
+    # hotel 0 and return arbitrary results.
+    if not isinstance(user_description, str) or not user_description:
         return []
 
     user_description = preprocess_text(user_description)

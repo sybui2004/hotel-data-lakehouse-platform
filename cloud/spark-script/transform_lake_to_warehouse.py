@@ -12,7 +12,7 @@ def main():
 
     df = spark.read.parquet(
         "gs://hotel-data-lake/raw/data_merge/*.parquet"
-    )
+    ).cache()
 
     dim_hotel = df.select(
         "hotel_id",
@@ -76,6 +76,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-# docker exec -it datalake-spark /opt/spark/bin/spark-submit --jars /opt/spark/extra-jars/postgresql-42.6.0.jar,/opt/spark/extra-jars/hadoop-aws-3.3.4.jar,/opt/spark/extra-jars/aws-java-sdk-bundle-1.12.262.jar --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 --conf spark.hadoop.fs.s3a.access.key=minio_access_key --conf spark.hadoop.fs.s3a.secret.key=minio_secret_key --conf spark.hadoop.fs.s3a.path.style.access=true --conf spark.hadoop.fs.s3a.connection.ssl.enabled=false --conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem --conf spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider /opt/spark/scripts/transform_lake_to_warehouse.py
 
 # Role: Dataproc Administrator
