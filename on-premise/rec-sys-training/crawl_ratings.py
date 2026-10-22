@@ -117,7 +117,7 @@ def crawl_all_review_pages(driver, hotel_id):
 
                 logger.info(f"After clicking Show all. {len(reviews)} reviews")
 
-            except:
+            except Exception:
                 logger.info("No Show all button found")
             
         if len(reviews) == 0:
@@ -146,7 +146,7 @@ def crawl_all_review_pages(driver, hotel_id):
             page_number += 1
             time.sleep(1)
 
-        except:
+        except Exception:
             logger.info("No more review pages")
             break
 

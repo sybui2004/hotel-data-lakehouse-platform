@@ -120,13 +120,13 @@ Run:
 
 ```bash
 cd ansible
-ansible-playbook create_compute_instance.yaml
+ansible-playbook create_compute_instance.yaml -e admin_cidr=$(curl -s ifconfig.me)/32
 ```
 
 This playbook creates:
 
 - a **GCE VM instance**
-- required **firewall rules**
+- required **firewall rules**: port `8000` (recommender app) is public, port `8081` (Airflow UI) is only open to `admin_cidr`
 
 ---
 
@@ -138,11 +138,20 @@ After the instance is created, obtain the **external IP address** and SSH into t
 ssh {user}@{external_IP}
 ```
 
+Create `cloud/.env` from the template and set a strong Airflow admin password (`.env` is git-ignored):
+
+```bash
+cp .env.example .env
+```
+
 After that, deploy the services:
 
 ```bash
 ansible-playbook -i inventory deploy.yaml
 ```
+
+> The password is only applied when the Airflow admin user is first created. On an existing deployment, change it on the VM with
+> `docker exec airflow-webserver airflow users reset-password -u airflow -p '<new password>'`.
 
 This will:
 

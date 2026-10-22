@@ -11,3 +11,6 @@ __pycache__/
 *.py[cod]
 .venv/
 .ipynb_checkpoints/
+
+# Local environment (copy from .env.example)
+.env

@@ -8,7 +8,6 @@ services:
     container_name: datalake-trino
     image: "trinodb/trino:410"
     volumes:
-      - ./trino/etc:/usr/lib/trino/etc:ro
       - ./trino/catalog:/etc/trino/catalog
     depends_on:
       - hive-metastore

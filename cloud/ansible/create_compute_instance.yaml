@@ -23,7 +23,27 @@
             type: ONE_TO_ONE_NAT
       state: present # change to absent to delete the instance
       
-  - name: Create inbound firewall rule for port 8000 and 8081
+  - name: Create inbound firewall rule for the recommender app (port 8000)
+    gcp_compute_firewall:
+      name: allow-recommender-app
+      network:
+        selfLink: global/networks/default
+      allowed:
+        - ip_protocol: TCP
+          ports:
+            - '8000'
+      source_ranges:
+        - 0.0.0.0/0
+      direction: INGRESS
+      description: Allow public traffic to the recommender app on port 8000
+      project: dataengineering-489105
+      auth_kind: serviceaccount
+      service_account_file: "{{ playbook_dir }}/secrets/gcp-key.json"
+      state: present # change to absent to delete the instance
+
+  # The Airflow UI must not be open to the internet: only admin_cidr may reach it.
+  # Pass it on the command line, e.g. -e admin_cidr=$(curl -s ifconfig.me)/32
+  - name: Create inbound firewall rule for the Airflow UI (port 8081)
     gcp_compute_firewall:
       name: allow-airflow-api
       network:
@@ -31,12 +51,11 @@
       allowed:
         - ip_protocol: TCP
           ports:
-            - '8000'
             - '8081'
       source_ranges:
-        - 0.0.0.0/0
+        - "{{ admin_cidr }}"
       direction: INGRESS
-      description: Allow incoming traffic on port 8000 and 8081
+      description: Allow the admin IP range to reach the Airflow UI on port 8081
       project: dataengineering-489105
       auth_kind: serviceaccount
       service_account_file: "{{ playbook_dir }}/secrets/gcp-key.json"
