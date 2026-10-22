@@ -2,3 +2,12 @@
 *.jar
 hotel-data-lakehouse-platform.egg-info/
 */build/
+# Credentials (never commit service account keys)
+gcp-key.json
+**/secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/

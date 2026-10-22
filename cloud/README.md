@@ -110,6 +110,8 @@ First, create a **Service Account** and generate a **JSON key** with the require
 
 ![role](./imgs/role.png)
 
+Save the key as `cloud/gcp-key.json` and copy it to `cloud/ansible/secrets/gcp-key.json`. Both paths are git-ignored, so the key is never committed.
+
 ---
 
 ## Create VM Instance
